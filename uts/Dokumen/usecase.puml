@@ -1,56 +1,50 @@
 @startuml usecase
 
-actor "Anggota" as A
-actor "Pustakawan bagian Registrasi" as P
-actor "Pustakawan bagian buku" as P2
+actor "Pasien" as P
+actor "Admin" as A
+actor "Dokter" as D
+actor "Perawat" as N
 
+usecase "Registrasi Pasien" as UC1
+usecase "Update Data Pasien" as UC2
+usecase "Registrasi Ditolak" as UC3
+usecase "Registrasi Diterima" as UC4
+usecase "Update Data Medis" as UC5
+usecase "Tambah Data Medis" as UC6
+usecase "Hapus Data Medis" as UC7
+usecase "Lihat Data Pasien" as UC8
+usecase "Periksa Data Pasien" as UC9
+usecase "Stop Akses" as UC11
+usecase "Cek Ketersediaan Dokter" as UC12
+usecase "Dokter Tersedia" as UC13
+usecase "Dokter Tidak Tersedia" as UC14
+usecase "Persetujuan Layanan" as UC15
 
-usecase "Registrasi Anggota" as UC1
-usecase "Update Data Anggota" as UC2
-usecase "ditolak" as UC3
-usecase "diterima" as UC4
-usecase "Update Data Buku" as UC5
-usecase "Menambah Buku" as UC6
-usecase "Menghapus Buku" as UC7
-usecase "Pengembalian Buku" as UC8
-usecase "Meminjam Buku" as UC9
-usecase "Melihat Buku" as UC10
-usecase "stop" as UC11
-usecase "cek buku" as UC12
-usecase "tersedia" as UC13
-usecase "tidak tersedia" as UC14
-usecase "disetujui" as UC15
+' Alur registrasi pasien
+P -> UC1 : Mengajukan Registrasi
+UC1 -> A : Menerima Notifikasi
+A -> UC2 : Update Data Pasien
+UC2 .> UC3 : <<extend>> Jika Registrasi Ditolak
+UC2 .> UC4 : <<extend>> Jika Registrasi Diterima
+UC3 -> P : Notifikasi Registrasi Ditolak
+UC4 -> P : Notifikasi Registrasi Diterima
 
-A -> UC1 : Registrasi
-UC1 -> P : Menerima Notifikasi
-P -> UC2 : Update Data
-UC2 .> UC3 : extend
-UC2 .> UC4 : extend
-UC3 --> A : Menerima notifikasi
-UC4 -> A : Menerima notifikasi
-A --> UC11 : jika registrasi ditolak
-A --> UC10 : jika registrasi diterima
-UC10 --> UC9 : Peminjaman
-UC9 --> P2 : Menerima notifikasi
+' Alur melihat data pasien
+P --> UC8 : Lihat Data Pasien (jika diterima)
+UC8 -> UC9 : Memeriksa Data Pasien
 
-P2 -> UC12 : pengecekan
-UC12 .> UC14 : extend
-UC14 -> UC11 : stop
-UC12 ..> UC13 : extend
-UC13 -> UC15 : disetujui
-UC15 -> UC8 : memberitahukan jadwal pengembalian
+' Periksa ketersediaan dokter dan layanan
+UC9 --> D : Pemberitahuan Permintaan Pemeriksaan
+D -> UC12 : Cek Ketersediaan Dokter
+UC12 .> UC14 : <<extend>> Jika Dokter Tidak Tersedia
+UC14 -> UC11 : Stop Akses
+UC12 ..> UC13 : <<extend>> Jika Dokter Tersedia
+UC13 -> UC15 : Memberikan Persetujuan Layanan
+UC15 -> UC5 : Informasi Jadwal Pemeriksaan
 
-P2 --> UC5 : Update Data
-UC5 ..> UC6 : include
-UC5 ..> UC7 : include
-
-
-
-
-
-
-
-
-
+' Alur pengelolaan data medis oleh admin dan dokter
+A -> UC5 : Update Data Medis
+UC5 ..> UC6 : <<include>> Tambah Data Medis
+UC5 ..> UC7 : <<include>> Hapus Data Medis
 
 @enduml

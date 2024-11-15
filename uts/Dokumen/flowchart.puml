@@ -1,29 +1,37 @@
-@startuml flowchart
+@startuml
+
 start
 
-:Anggota melakukan registrasi;
-:Pustakawan bagian Registrasi menerima notifikasi;
-if (Registrasi diterima?) then (Ya)
-    :Pustakawan bagian Registrasi update data;
-    :Anggota menerima notifikasi diterima;
-    :Anggota melihat daftar buku;
-    :Anggota memilih buku dan mengajukan peminjaman;
-    :Pustakawan bagian Buku menerima notifikasi peminjaman;
-    :Pustakawan bagian Buku melakukan pengecekan ketersediaan buku;
-    
-    if (Buku tersedia?) then (Ya)
-        :Pustakawan bagian Buku menyetujui peminjaman;
-        :Anggota menerima jadwal pengembalian buku;
-        :Proses selesai;
+:Login;
+:Masukkan Email dan Password;
+if (Verifikasi User) then (Berhasil)
+    if (Apakah Admin?) then (Ya)
+        :Tampilkan Dashboard Admin;
+        :Kelola Data Pasien;
+        :Kelola Data Pengguna;
+        if (Tambah Data Pasien?) then (Ya)
+            :Input Data Pasien Baru;
+            :Simpan Data;
+        endif
+
+        if (Lihat Laporan Data Pasien?) then (Ya)
+            :Tampilkan Laporan Pasien;
+        endif
+
     else (Tidak)
-        :Peminjaman dihentikan;
-        :Anggota menerima notifikasi buku tidak tersedia;
-        :Proses berhenti;
+        :Tampilkan Dashboard Pengguna;
+        if (Pilih Pasien?) then (Ya)
+            :Tampilkan Detail Pasien;
+            if (Update Data?) then (Ya)
+                :Update Data Medis Pasien;
+                :Simpan Perubahan;
+            endif
+        endif
     endif
-else (Tidak)
-    :Pustakawan bagian Registrasi mengirim notifikasi penolakan;
-    :Proses berhenti;
+else (Gagal)
+    :Tampilkan Pesan Error;
 endif
 
 stop
+
 @enduml
